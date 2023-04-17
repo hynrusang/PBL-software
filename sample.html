@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width">
+    </head>
+    <body>
+        <style>
+            header, footer {
+                width: 100%;
+                height: 40px;
+            }
+            article > section, footer *:not(td) {
+                width: 100%;
+                height: 100%;
+            }
+            article > section {
+                overflow-x: hidden;
+                overflow-y: scroll;
+            }
+            article > section::-webkit-scrollbar {
+                display: none;
+            }
+            article > section > div {
+                width: 100%;
+                height: 60px;
+                display: flex;
+                justify-content: space-around;
+            }
+            article > section > div > img {
+                width: 40px;
+                height: 40px;
+                margin-top: 10px;
+                margin-left: 10px;
+                border-radius: 10px
+            }
+            hr {
+                height: 1px;
+                color: rgba(128, 128, 128, 0.1);
+                background: rgba(128, 128, 128, 0.1);
+                border: rgba(128, 128, 128, 0.1);
+            }
+            body {
+                width: 100vw;
+                height: 100vh;
+                margin: 0px;
+                overflow: hidden;
+            }
+            header {
+                display: flex;
+                justify-content: space-between;
+            }
+            header > span {
+                font-size: 22px;
+                margin-left: 10px;
+                margin-top: 10px;
+                font-weight: bold;
+            }
+            [type="button"] {
+                border: none;
+                cursor: pointer;
+                border-radius: 20px;
+                background-size: 22px;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+            header input {
+                margin-top:10px;
+                margin-right: 10px;
+                width: 30px;
+                height: 30px;
+                background-size: 22px;
+                background-repeat: no-repeat;
+                background-position: center center;
+            }
+            article {
+                width: 100%;
+                height: calc(100% - 80px);
+            }
+            .hidden {
+                display: none;
+            }
+            span {
+                display: inline-block;
+            }
+        </style>
+        <header>
+            <span>친구</span>
+            <div>
+                <input type="button" />
+                <input type="button" />
+                <input type="button" />
+                <input type="button" />
+            </div>
+        </header>
+        <article>
+            <section>
+                <div class="ads">
+
+                </div>
+                <div class="user_profile">
+                    <img src="https://www.google.com/s2/favicons?domain=https://www.google.com/" style="" />
+                    <div style="width: calc(100% - 80px); margin-top: 5px;">
+                        <span id="username" style="width: 100%; height: 20px; font-size: 20px;"></span>
+                        <span id="user_description" style="width: 100%; font-size: 10px;"></span>
+                    </div>
+                </div>
+                <hr />
+                <span id="friend_count" style="width: 100%; font-size: 11px; margin-left: 10px; color: rgb(128, 128, 128)"></span>
+            </section>
+            <section class="hidden"></section>
+            <section class="hidden"></section>
+            <section class="hidden"></section>
+            <section class="hidden"></section>
+        </article>
+        <footer>
+            <table>
+                <tr>
+                    <td><input type="button" style="background-image: url(resource/img/user.png)" /></td>
+                    <td><input type="button"  style="background-image: url(resource/img/chat.png)" /></td>
+                    <td><input type="button" /></td>
+                    <td><input type="button" /></td>
+                    <td><input type="button" /></td>
+                </tr>
+            </table>
+        </footer>
+        <script src="https://hynrusang.github.io/resource/js/1.0.0/jh.js"></script>
+        <script>
+            let headers = ["친구", "채팅"]
+            let db = {
+                "username": "test",
+                "user_description": "this is my description.",
+                "friend": [
+                    {
+                        "username": "friend1",
+                        "user_description": "i'm a friend one."
+                    },
+                    {
+                        "username": "friend2",
+                        "user_description": "i'm a friend second."
+                    },
+                    {
+                        "username": "friend3",
+                        "user_description": "i'm a friend trith."
+                    }
+                ]
+            }
+            scan("#username").innerText = db.username;
+            scan("#user_description").innerText = db.user_description;
+            scan("#friend_count").innerText = `친구 ${db.friend.length}`;
+            for (let fri of db.friend) {
+                snipe("section").add(
+                    $("div").add(
+                        $("img", { "style": "width: 40px; height: 40px; margin-top: 10px; margin-left: 10px; border-radius: 10px" }),
+                        $("div", { "style": "width: calc(100% - 80px); margin-top: 5px;" }).add(
+                            $("span", { "style": "display: inline-block; width: 100%; height: 20px; font-size: 20px;", "text": fri.username }),
+                            $("span", { "style": "display: inline-block; width: 100%; font-size: 10px;", "text": fri.user_description })
+                        )
+                    )
+                )
+            }
+            const swipContext = e => {
+                if (!localStorage.getItem("index")) return;
+                const obj = (!e) ? null : (e.target.nodeName == "TD") ? e.target : e.target.parentElement;
+                const index = [obj ? parseInt(localStorage.getItem("index")) : 0, obj ? getIndex(obj.parentElement, obj) : localStorage.getItem("index")];
+                scan("!section")[index[0]].classList.add("hidden");
+                scan("!section")[index[1]].classList.remove("hidden");
+                scan("header span").innerText = headers[index[1]];
+                localStorage.setItem("index", index[1]);
+            }
+            scan("!footer td").forEach(obj => {
+                obj.onclick = swipContext
+            })
+            swipContext();
+        </script>
+    </body>
+</html>
